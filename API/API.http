@@ -1,7 +1,8 @@
 @API_HostAddress = http://localhost:5254
 
 ###
-POST 
+POST {{API_HostAddress}}/api/register/user
+Content-Type: application/json
 {
     //strängar 
 }
