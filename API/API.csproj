@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Contracts\" />
+    <Folder Include="Contracts\Requests\" />
+    <Folder Include="Contracts\Responses\" />
+    <Folder Include="Contracts\Responses\Filmstudios\" />
+    <Folder Include="Contracts\Responses\Films\" />
+    <Folder Include="Contracts\Responses\Users\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
     <Folder Include="Models\FilmStudio\" />
