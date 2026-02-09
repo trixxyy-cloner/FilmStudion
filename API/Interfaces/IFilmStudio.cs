@@ -2,7 +2,7 @@ using System;
 
 namespace API.Interfaces;
 
-public class IFilmStudio
+public interface IFilmStudio
 {
     int FilmStudioId {get; set;}
     string Name {get; set;}
