@@ -19,6 +19,12 @@ public class FilmStudionDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<API.Models.FilmCopy.FilmCopyEntity>()
+        .HasKey(x => x.FilmCopyId);
+
+        modelBuilder.Entity<API.Models.User.UserEntity>()
+        .HasKey(x => x.UserId);
+
         base.OnModelCreating(modelBuilder);
     }
 }

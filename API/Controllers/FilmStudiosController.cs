@@ -23,10 +23,30 @@ public class FilmStudiosController : ControllerBase
 
         if (isAdmin)
         {
-            return Ok();
+            var studios = await _db.FilmStudios
+                .Include(s => s.RentedFilmCopies)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var adminDtos = studios.Select(s => new FilmStudioAdminDto(
+                s.FilmStudioId,
+                s.Name,
+                s.City,
+                s.RentedFilmCopies.Select(c => new FilmCopyDto(c.FilmCopyId, c.FilmId, c.RentedByFilmStudioId)).ToList()
+            )).ToList();
+
+            return Ok(adminDtos);
         }
 
-        return Ok();
+        var publicStudios = await _db.FilmStudios
+            .AsNoTracking()
+            .ToListAsync();
+
+        var publicDtos = publicStudios
+            .Select(s => new FilmStudioPublicDto(s.FilmStudioId, s.Name))
+            .ToList();
+
+        return Ok(publicDtos);
     }
 
     private AuthSession? GetSession()

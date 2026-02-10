@@ -1,20 +1,14 @@
 @host = http://localhost:5254
-
-# Klistra in tokens här efter auth:
 @adminToken = PUT_ADMIN_TOKEN_HERE
 @studioToken = PUT_STUDIO_TOKEN_HERE
-
-#Id:n som testas
 @filmId = 1
 @studioId = 1
 
-### Root ###
+### Root
 GET {{host}}/
 Accept: application/json
 
-#### ADMIN REGISTER + AUTHENTICATE ####
-
-# Register admin
+### Register admin 
 POST {{host}}/api/users/register
 Content-Type: application/json
 Accept: application/json
@@ -25,7 +19,7 @@ Accept: application/json
     "isAdmin": true
 }
 
-# Authenticate Admin
+### Authenticate admin 
 POST {{host}}/api/users/authenticate
 Content-Type: application/json
 Accept: application/json
@@ -35,73 +29,39 @@ Accept: application/json
     "password": "pass123"
 }
 
-#### GET ALL STUDIOS (PUBLIC vs ADMIN) ####
-
-# Get all filmstudios (OAUTH => INTE city, INTE RentedFilmCopies)
-GET {{host}}/api/filmstudios
+### Register filmstudio 
+POST {{host}}/api/filmstudio/register
+Content-Type: application/json
 Accept: application/json
 
-# Get all filmstudios (ADMIN => full inkl City + RentedFilmCopies)
-GET {{host}}/api/filmstudios
+{
+    "name": "Studio One",
+    "city": "Stockholm",
+    "username": "studio1",
+    "password": "pass123"
+}
+
+### Authenticate filmstudio 
+POST {{host}}/api/users/authenticate
+Content-Type: application/json
 Accept: application/json
-Authentication: {{adminToken}}
 
-#### GET SINGLE STUDIO (PUBLIC vs SELF vs ADMIN) ####
+{
+    "username": "studio1",
+    "password": "pass123"
+}
 
-# Get studio by id (OAUTH => public)
-GET {{host}}/api/filmstudio/{{studioId}}
-Accept: application/json
-
-# Get studio by id (SELF filmstudio => full)
-GET {{host}}/api/filmstudio/{{studioId}}
-Accept: application/json
-Authentication: {{studioToken}}
-
-# Get studio by id (filmstudio but NOT self => public)
-# (Kräver att du registrerar + auth en studio2 och provar mot studioId=1)
-
-
-#### RENT + RETURN ####
-
-# Rent film (filmstudio-only)
+### Rent 
 POST {{host}}/api/films/rent?id={{filmId}}&studioid={{studioId}}
 Accept: application/json
 Authentication: {{studioToken}}
 
-# Rent with WRONG studioid (ska ej vara en 200)
-POST {{host}}/api/films/rent?id={{filmId}}&studioid=999
+### Return 
+POST {{host}}/api/films/return?id={{filmId}}&studioid={{studioId}}
 Accept: application/json
 Authentication: {{studioToken}}
 
-# Rent as ADMIN (ska ej vara en 200)
-POST {{host}}/api/films/rent?id={{filmId}}&studioid={{studioId}}
-Accept: application/json
-Authentication: {{adminToken}}
-
-# Rent non-existing film => 409
-POST {{host}}/api/films/rent?id=9999&studioid={{studioId}}
-Accept: application/json
-Authentication: {{studioToken}}
-
-# Return film (filmstudio-only)
-POST {{host}}/api/films/return?id={{filmId}}%studioid={{studioId}}
-Accept: application/json
-Authentication: {{studioToken}}
-
-# Return non-existing film => 409
-POST {{host}}/api/films/return?id=9999&studioid={{studioId}}
-Accept: application/json
-Authentication: {{studioToken}}
-
-
-#### MY STUDIO RENTALS ####
-
-# My rentals (filmstudio-only)
+### My rentals 
 GET {{host}}/api/mystudio/rentals
 Accept: application/json
 Authentication: {{studioToken}}
-
-# My rentals without auth => 401
-
-GET {{host}}/api/mystudio/rentals
-Accept: application/json
