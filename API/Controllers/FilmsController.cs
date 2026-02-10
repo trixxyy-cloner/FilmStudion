@@ -3,6 +3,8 @@ using API.Auth;
 using API.Contracts.Requests;
 using API.Contracts.Responses.Films;
 using API.Data;
+using API.Models.Film;
+using API.Models.FilmCopy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,10 +24,21 @@ public class FilmsController : ControllerBase
 
         if (session is null)
         {
-            return Ok();
+            var films = await _db.Films.AsNoTracking().ToListAsync();
+            return Ok(films.Select(f => new FilmPublicDto(f.FilmId, f.Title, f.ReleaseYear)).ToList());
         }
 
-        return Ok();
+        var authFilms = await _db.Films
+            .Include(f => f.FilmCopies)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return Ok(authFilms.Select(f => new FilmAuthDto(
+            f.FilmId,
+            f.Title,
+            f.ReleaseYear,
+            f.FilmCopies.Select(c => new FilmCopyDto(c.FilmCopyId, c.FilmId, c.RentedByFilmStudioId)).ToList()
+        )).ToList());
     }
 
     [HttpGet("{id:int}")]
@@ -35,10 +48,24 @@ public class FilmsController : ControllerBase
 
         if (session is null)
         {
-            return Ok();
+            var film = await _db.Films.AsNoTracking().FirstOrDefaultAsync(f => f.FilmId == id);
+            if (film is null) return NotFound();
+            return Ok(new FilmPublicDto(film.FilmId, film.Title, film.ReleaseYear));
         }
 
-        return Ok();
+        var authFilm = await _db.Films
+            .Include(f => f.FilmCopies)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(f => f.FilmId == id);
+
+        if (authFilm is null) return NotFound();
+
+        return Ok(new FilmAuthDto(
+            authFilm.FilmId,
+            authFilm.Title,
+            authFilm.ReleaseYear,
+            authFilm.FilmCopies.Select(c => new FilmCopyDto(c.FilmCopyId, c.FilmId, c.RentedByFilmStudioId)).ToList()
+        ));
     }
 
 
@@ -47,7 +74,30 @@ public class FilmsController : ControllerBase
     {
         if (!IsAdmin()) return Unauthorized();
 
-        return Ok();
+        if (body is null) return BadRequest();
+        if (string.IsNullOrWhiteSpace(body.Title)) return BadRequest("Title is required");
+        if (body.NumberOfCopies < 0) return BadRequest("Number of copies must be >= 0");
+
+        var film = new Film
+        {
+            Title = body.Title.Trim(),
+            ReleaseYear = body.ReleaseYear
+        };
+
+        for (var i = 0; i < body.NumberOfCopies; i++)
+            film.FilmCopies.Add(new FilmCopyEntity());
+
+        _db.Films.Add(film);
+        await _db.SaveChangesAsync();
+
+        var dto = new FilmAuthDto(
+            film.FilmId,
+            film.Title,
+            film.ReleaseYear,
+            film.FilmCopies.Select(c => new FilmCopyDto(c.FilmCopyId, c.FilmId, c.RentedByFilmStudioId)).ToList()
+        );
+
+        return Ok(dto);
     }
 
     [HttpPatch("{id:int}")]
