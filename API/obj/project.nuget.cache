@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "yF3BNxIBHZ8=",
+  "dgSpecHash": "6cm6PYNJdoc=",
   "success": true,
-  "projectFilePath": "C:\\Users\\trixx\\Desktop\\Code\\C#\\FilmStudion\\API\\API.csproj",
+  "projectFilePath": "C:\\Users\\trixx\\Desktop\\Code\\CSharp\\FilmStudion\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\trixx\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.0\\microsoft.aspnetcore.openapi.8.0.0.nupkg.sha512",
     "C:\\Users\\trixx\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.23\\microsoft.entityframeworkcore.8.0.23.nupkg.sha512",

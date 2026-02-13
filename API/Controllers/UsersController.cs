@@ -1,5 +1,4 @@
 using System;
-using System.Security.Cryptography.X509Certificates;
 using API.Auth;
 using API.Contracts.Requests;
 using API.Contracts.Responses.Users;
@@ -17,7 +16,8 @@ public class UsersController : ControllerBase
     private readonly FilmStudionDbContext _db;
     public UsersController(FilmStudionDbContext db) => _db = db;
     
-    
+    // Skapar en admin-användare.
+    // Returnerar INTE password, bara safe fields.
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterRequest body)
     {
@@ -28,12 +28,13 @@ public class UsersController : ControllerBase
         if (string.IsNullOrWhiteSpace(body.Username) || string.IsNullOrWhiteSpace(body.Password))
             return BadRequest("Username and password are required");
 
-        var usernameExists = await _db.Users.AnyAsync(u => u.Username == body.Username);
+        var normalized = body.Username.Trim().ToLowerInvariant();
+        var usernameExists = await _db.Users.AnyAsync(u => u.Username == normalized);
         if (usernameExists) return Conflict("Username already exists");
 
         var user = new UserEntity
         {
-            Username = body.Username.Trim(),
+            Username = normalized,
             Password = body.Password,
             Role = "admin",
             FilmStudioId = null,
@@ -48,6 +49,8 @@ public class UsersController : ControllerBase
 
     }
 
+    // Loggar in (admin eller filmstudio).
+    // Om login lyckas: skapar en token och returnerar den + användardata utan password.
     [HttpPost("authenticate")]
     public async Task<IActionResult> Authenticate([FromBody] UserAuthenticateRequest body)
     {
@@ -56,9 +59,11 @@ public class UsersController : ControllerBase
         if (string.IsNullOrWhiteSpace(body.Username) || string.IsNullOrWhiteSpace(body.Password))
             return BadRequest("Username and password are required");
 
+        var normalized = body.Username.Trim().ToLowerInvariant();
+        
         var user = await _db.Users
             .Include(u => u.FilmStudio)
-            .FirstOrDefaultAsync(u => u.Username == body.Username);
+            .FirstOrDefaultAsync(u => u.Username == normalized);
 
         if (user is null) return Unauthorized();
 
@@ -96,6 +101,20 @@ public class UsersController : ControllerBase
         );
 
         return Ok(new AuthenticateResponseDto(token, userDto));
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var session = GetSession();
+        if (session is null) return Unauthorized();
+
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.UserId == session.UserId);
+        if (user is null) return Unauthorized();
+
+        user.AuthToken = null;
+        await _db.SaveChangesAsync();
+        return Ok();
     }
 
     private AuthSession? GetSession()
