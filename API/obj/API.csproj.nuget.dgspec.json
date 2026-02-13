@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\trixx\\Desktop\\Code\\C#\\FilmStudion\\API\\API.csproj": {}
+    "C:\\Users\\trixx\\Desktop\\Code\\CSharp\\FilmStudion\\API\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\trixx\\Desktop\\Code\\C#\\FilmStudion\\API\\API.csproj": {
+    "C:\\Users\\trixx\\Desktop\\Code\\CSharp\\FilmStudion\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\trixx\\Desktop\\Code\\C#\\FilmStudion\\API\\API.csproj",
+        "projectUniqueName": "C:\\Users\\trixx\\Desktop\\Code\\CSharp\\FilmStudion\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\trixx\\Desktop\\Code\\C#\\FilmStudion\\API\\API.csproj",
+        "projectPath": "C:\\Users\\trixx\\Desktop\\Code\\CSharp\\FilmStudion\\API\\API.csproj",
         "packagesPath": "C:\\Users\\trixx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\trixx\\Desktop\\Code\\C#\\FilmStudion\\API\\obj\\",
+        "outputPath": "C:\\Users\\trixx\\Desktop\\Code\\CSharp\\FilmStudion\\API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

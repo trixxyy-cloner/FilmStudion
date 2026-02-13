@@ -12,6 +12,8 @@ public class FilmStudionDbContext : DbContext
 {
     public FilmStudionDbContext(DbContextOptions<FilmStudionDbContext> options) : base(options) { }
 
+    // DbContext = vår "databas" i EF.
+    // DbSet = tabeller som EF kan query:a och spara till.
     public DbSet<Film> Films => Set<Film>();
     public DbSet<FilmCopyEntity> FilmCopies => Set<FilmCopyEntity>();
     public DbSet<FilmStudio> FilmStudios => Set<FilmStudio>();
@@ -19,6 +21,8 @@ public class FilmStudionDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // EF gissar inte alltid rätt primary key-namn.
+        // Därför säger vi exakt vilken property som är nyckeln.
         modelBuilder.Entity<API.Models.FilmCopy.FilmCopyEntity>()
         .HasKey(x => x.FilmCopyId);
 

@@ -1,0 +1,548 @@
+/* Layout */
+#root {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.app {
+  display: grid;
+  gap: 16px;
+}
+
+.content {
+  max-width: 1100px;
+  margin: 16px auto;
+  padding: 0 24px 24px;
+  display: grid;
+  gap: 16px;
+}
+
+/* Sections */
+.section {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+}
+
+.section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.section__title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.section__headerActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Fields */
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field__label {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.field__input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: inherit;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn--secondary {
+  opacity: 0.92;
+}
+
+/* Helpers */
+.muted {
+  opacity: 0.7;
+}
+
+.alert {
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Sticky responsive navbar */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+
+  background: rgba(24, 24, 24, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+
+  padding: 0;
+  backdrop-filter: blur(10px);
+}
+
+.nav__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 24px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav__left {
+  flex: 1;
+  min-width: 180px;
+}
+
+.nav__title {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.nav__titleLink {
+  cursor: pointer;
+}
+
+.nav__center {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex: 2;
+  flex-wrap: wrap;
+}
+
+.nav__right {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 220px;
+}
+
+.nav__link {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: inherit;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.navGuest {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.navUser {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.navUser__meta {
+  display: grid;
+  gap: 2px;
+  text-align: right;
+}
+
+.nav__burger {
+  display: none;
+  margin-left: auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav__burgerBars {
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  position: relative;
+  display: block;
+}
+
+.nav__burgerBars::before,
+.nav__burgerBars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+}
+
+.nav__burgerBars::before { top: -6px; }
+.nav__burgerBars::after { top: 6px; }
+
+.navMenu {
+  display: none;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 24px 14px;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.navMenu__sep {
+  height: 1px;
+  border: none;
+  background: rgba(255, 255, 255, 0.10);
+  margin: 6px 0;
+}
+
+/* Full-page auth view */
+.authPage {
+  display: grid;
+  place-items: center;
+  padding: 20px 0;
+}
+
+.authCard {
+  width: min(520px, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.authCard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.authCard__title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.authCard__error {
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.authForm {
+  display: grid;
+  gap: 10px;
+}
+
+/* Film browser (carousel) */
+.filmBrowser {
+  display: grid;
+  gap: 12px;
+}
+
+.filmCarousel {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+}
+
+.filmCard {
+  min-width: 170px;
+  max-width: 170px;
+  text-align: left;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.filmCard--selected {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.filmCard__poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.filmCard__poster--empty {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.filmCard__title {
+  font-weight: 800;
+}
+
+/* Film details */
+.filmDetails {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.filmDetails__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filmDetails__title {
+  margin: 0;
+}
+
+.filmDetails__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filmDetails__body {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 160px 1fr;
+  align-items: start;
+}
+
+.filmDetails__poster {
+  width: 160px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.filmDetails__description {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Films list view */
+.posterGrid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-items: start;
+}
+
+.posterTile {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+
+  overflow: hidden;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.posterTile__img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.posterTile__img--empty {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+
+.filmListItem__poster {
+  width: 70px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.filmListItem__poster--empty {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.filmListItem__title {
+  font-weight: 800;
+}
+
+.filmListItem__quickRent {
+  opacity: 0;
+  pointer-events: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.filmListItem:hover .filmListItem__quickRent {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.filmListItem__quickRent:disabled {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Rentals */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.rentalRow {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+}
+
+.rentalRow__title {
+  font-weight: 800;
+}
+
+.rentalRow__button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Mobile tweaks */
+@media (max-width: 720px) {
+
+  .content {
+    margin: 12px auto;
+    padding: 0 14px 14px;
+  }
+
+  .nav {
+    padding: 0;
+  }
+
+  .nav__inner {
+    flex-wrap: nowrap;
+  }
+
+  .nav__left {
+    min-width: 0;
+  }
+
+  .nav__right {
+    justify-content: flex-start;
+  }
+
+  .nav__title {
+    font-size: 1.35rem;
+  }
+
+  .nav__inner {
+    padding: 10px 14px;
+  }
+
+  .nav__center,
+  .nav__right {
+    display: none;
+  }
+
+  .nav__burger {
+    display: inline-flex;
+  }
+
+  .navMenu.navMenu--open {
+    display: grid;
+    padding: 10px 14px 14px;
+  }
+
+  .filmDetails__body {
+    grid-template-columns: 1fr;
+  }
+
+
+  .filmDetails__poster {
+    width: 100%;
+    max-width: 220px;
+  }
+
+  .posterGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}

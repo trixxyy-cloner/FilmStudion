@@ -20,10 +20,21 @@ public class MyStudioController : ControllerBase
     {
         var session = GetSession();
         if (session is null) return Unauthorized();
-        if (!session.Role.Equals("filmstudio", StringComparison.OrdinalIgnoreCase)) return Unauthorized();
 
+        if (!session.Role.Equals("filmstudio", StringComparison.OrdinalIgnoreCase)) 
+            return Unauthorized();
+
+        var studioId = session.FilmStudioId;
+        if (studioId is null) return Unauthorized();
+
+        var rentals = await _db.FilmCopies
+            .AsNoTracking()
+            .Where(c => c.RentedByFilmStudioId == studioId)
+            .ToListAsync();
+
+        var dtos = rentals.Select(c => new FilmCopyDto(c.FilmCopyId, c.FilmId, c.RentedByFilmStudioId)).ToList();
         
-        return Ok();
+        return Ok(dtos);
     }
 
     private AuthSession? GetSession()

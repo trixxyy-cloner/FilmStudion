@@ -17,6 +17,8 @@ public class FilmsController : ControllerBase
     private readonly FilmStudionDbContext _db;
     public FilmsController(FilmStudionDbContext db) => _db = db;
 
+    // Om man inte är inloggad: returnera FilmPublicDto (utan FilmCopies).
+    // Om man är inloggad: returnera FilmAuthDto (med FilmCopies).
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -68,7 +70,7 @@ public class FilmsController : ControllerBase
         ));
     }
 
-
+    // Admin-only: skapar film och rätt antal copies.
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateFilmRequest body)
     {
@@ -101,32 +103,105 @@ public class FilmsController : ControllerBase
     }
 
     [HttpPatch("{id:int}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFilmRequest body) 
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFilmFullRequest body) 
     {
         if (GetSession() is null) return Unauthorized();
         if (!IsAdmin()) return Unauthorized();
 
-        return Ok();
+        var film = await _db.Films
+            .Include(f => f.FilmCopies)
+            .FirstOrDefaultAsync(f => f.FilmId == id);
+
+        if (film is null) return NotFound();
+
+        if (!string.IsNullOrWhiteSpace(body.Title))
+            film.Title = body.Title.Trim();
+
+        film.ReleaseYear = body.ReleaseYear;
+
+        var desired = body.FilmCopies?.Count ?? 0;
+        if (desired < 0) return BadRequest("Number of copies must be >= 0");
+
+        var current = film.FilmCopies.Count;
+        if (desired > current)
+        {
+            for (var i = 0; i < desired - current; i++)
+                film.FilmCopies.Add(new FilmCopyEntity());
+        }
+        else if (desired < current)
+        {
+            var removable = film.FilmCopies
+                .Where(c => c.RentedByFilmStudioId == null)
+                .OrderByDescending(c => c.FilmCopyId)
+                .ToList();
+
+            var toRemoveCount = current - desired;
+            if (removable.Count < toRemoveCount)
+                return Conflict("Not enough available copies to remove");
+
+            _db.FilmCopies.RemoveRange(removable.Take(toRemoveCount));
+        }
+
+        await _db.SaveChangesAsync();
+
+        var dto = new FilmAuthDto(
+            film.FilmId,
+            film.Title,
+            film.ReleaseYear,
+            film.FilmCopies.Select(c => new FilmCopyDto(c.FilmCopyId, c.FilmId, c.RentedByFilmStudioId)).ToList()
+        );
+
+        return Ok(dto);
     }
 
+    // Filmstudio-only: hyr ett exemplar om det finns ledigt.
     [HttpPost("rent")]
-    public async Task<IActionResult> Rent([FromQuery] int id, [FromQuery] int studioId)
+    public async Task<IActionResult> Rent([FromQuery(Name = "id")] int id, [FromQuery(Name = "studioid")] int studioId)
     {
         var session = GetSession();
         if (session is null) return Unauthorized();
+
         if (!session.Role.Equals("filmstudio", StringComparison.OrdinalIgnoreCase)) return Unauthorized();
-        if (session.FilmStudioId != studioId) return Unauthorized();
+        if (session.FilmStudioId is null || session.FilmStudioId.Value != studioId) return Unauthorized();
+
+        var film = await _db.Films
+            .Include(f => f.FilmCopies)
+            .FirstOrDefaultAsync(f => f.FilmId == id);
+
+        if (film is null) return Conflict("Film not found.");
+
+        if (film.FilmCopies.Any(c => c.RentedByFilmStudioId == studioId))
+            return StatusCode(403, "Studio already rents a copy of this film.");
+
+        var freeCopy = film.FilmCopies.FirstOrDefault(c => c.RentedByFilmStudioId == null);
+        if (freeCopy is null) return Conflict("No available copies.");
+
+        freeCopy.RentedByFilmStudioId = studioId;
+        await _db.SaveChangesAsync();
 
         return Ok();
     }
 
+    // Filmstudio-only: lämnar tillbaka ett hyrt exemplar.
     [HttpPost("return")]
-    public async Task<IActionResult> Return([FromQuery] int id, [FromQuery] int studioid)
+    public async Task<IActionResult> Return([FromQuery] int id, [FromQuery(Name = "studioid")] int studioId)
     {
         var session = GetSession();
         if (session is null) return Unauthorized();
+
         if (!session.Role.Equals("filmstudio", StringComparison.OrdinalIgnoreCase)) return Unauthorized();
-        if (session.FilmStudioId != studioid) return Unauthorized();
+        if (session.FilmStudioId is null || session.FilmStudioId.Value != studioId) return Unauthorized();
+
+        var filmExists = await _db.Films.AnyAsync(f => f.FilmId == id);
+        if (!filmExists) return Conflict("Film not found.");
+
+        var rentedCopy = await _db.FilmCopies
+            .FirstOrDefaultAsync(c => c.FilmId == id && c.RentedByFilmStudioId == studioId);
+
+        if (rentedCopy is null) return Conflict("No rented copy found for this studio.");
+
+        rentedCopy.RentedByFilmStudioId = null;
+        await _db.SaveChangesAsync();
 
         
         return Ok();

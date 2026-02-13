@@ -34,7 +34,7 @@ public class FilmStudioController : ControllerBase
         }
 
         var normalized = body.Username.Trim().ToLowerInvariant();
-        var usernameExists = await _db.Users.AnyAsync(u => u.Username == body.Username);
+        var usernameExists = await _db.Users.AnyAsync(u => u.Username == normalized);
         if (usernameExists) return Conflict("Username already exists");
 
         var studio = new FilmStudio
@@ -45,7 +45,7 @@ public class FilmStudioController : ControllerBase
 
         var user = new UserEntity
         {
-            Username = body.Username.Trim(),
+            Username = normalized,
             Password = body.Password,
             Role = "filmstudio",
             FilmStudio = studio

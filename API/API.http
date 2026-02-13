@@ -1,8 +1,9 @@
 @host = http://localhost:5254
-@adminToken = PUT_ADMIN_TOKEN_HERE
-@studioToken = PUT_STUDIO_TOKEN_HERE
+@adminToken = 60af957fb7654ee0b396e6828f5ef070
+@studioToken = PUT_TOKEN_HERE
 @filmId = 1
 @studioId = 1
+
 
 ### Root
 GET {{host}}/
@@ -28,6 +29,17 @@ Accept: application/json
     "username": "admin1",
     "password": "pass123"
 }
+
+### Create film (admin)
+POST {{host}}/api/films
+Accept: application/json
+Content-Type: application/json
+Authentication: {{adminToken}}
+
+
+### Get films (public)
+GET {{host}}/api/films
+Accept: application/json
 
 ### Register filmstudio 
 POST {{host}}/api/filmstudio/register
